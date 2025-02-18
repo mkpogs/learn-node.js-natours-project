@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+    aliasTopTours,
     getAllTours, 
     createTour, 
     getTour, 
@@ -11,6 +12,9 @@ const router = express.Router();
 
 // Param Middleware
 // router.param('id', checkID);
+
+router.route('/top-5-cheap')
+    .get(aliasTopTours, getAllTours);
 
 router.route('/')
     .get(getAllTours)

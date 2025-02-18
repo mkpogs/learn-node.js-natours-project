@@ -11,6 +11,13 @@ import Tour from './../models/tourModel.js';
 
 // --- Tour Route Handlers
 
+export const aliasTopTours = async(req, res, next) => {
+    req.query.limit = '5';
+    req.query.sort = "-ratingsAverage,price";
+    req.query.fields = "name,price,difficulty,ratingsAverage,summary";
+    next();
+}
+
 // Create a new tour
 export const createTour = async(req, res) => {
     
