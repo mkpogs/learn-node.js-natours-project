@@ -6,7 +6,8 @@ import {
     getTour, 
     updateTour, 
     deleteTour,
-    getTourStats
+    getTourStats,
+    getMonthlyPlan
 } from './../controllers/tourController.js';
 
 const router = express.Router();
@@ -14,8 +15,8 @@ const router = express.Router();
 // Param Middleware
 // router.param('id', checkID);
 
-router.route('/tour-stats')
-    .get(getTourStats);
+router.route('/tour-stats').get(getTourStats);
+router.route('/monthly-plan/:year').get(getMonthlyPlan);
 
 router.route('/top-5-cheap')
     .get(aliasTopTours, getAllTours);
