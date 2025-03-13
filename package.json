@@ -12,6 +12,7 @@
   "author": "Mj",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
