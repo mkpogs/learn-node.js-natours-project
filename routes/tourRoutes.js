@@ -9,6 +9,7 @@ import {
     getTourStats,
     getMonthlyPlan
 } from './../controllers/tourController.js';
+import { protect } from "./../controllers/authController.js";
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ router.route('/top-5-cheap')
     .get(aliasTopTours, getAllTours);
 
 router.route('/')
-    .get(getAllTours)
+    .get(protect, getAllTours)
     .post(createTour);
 
 router.route('/:id')

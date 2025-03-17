@@ -34,6 +34,9 @@ const userSchema = new mongoose.Schema({
             },
             message: 'Password does not match!'
         }
+    },
+    passwordChangedAt: {
+        type: Date
     }
 });
 
@@ -46,13 +49,35 @@ userSchema.pre('save', async function(next){
     //  Hash the password with cost of 12
     this.password = await bcrypt.hash(this.password, 12);
 
+
+    // If password is changed, update passwordChangedAt
+    // if(!this.isNew){
+    //     // this.passwordChangedAt = Date.now() - 1000; // Ensures JWT issuance timing does not cause auth issues
+    //     this.passwordChangedAt = new Date(Date.now() - 1000); // Avoid timing issues
+    // }
+
     // Delete passwordConfirm field
     this.passwordConfirm = undefined;
+
     next();
 });
 
+// Instance method
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword){
     return await bcrypt.compare(candidatePassword, userPassword)
+}
+
+userSchema.methods.changedPasswordAfter = async function (JWTTimestamp) {
+    if(this.passwordChangedAt){
+        const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10); 
+
+        console.log(changedTimestamp, JWTTimestamp);
+
+        return JWTTimestamp < changedTimestamp;
+    }
+
+    // FALSE means NOT changed
+    return false;
 }
 
 const User = mongoose.model('User', userSchema);
