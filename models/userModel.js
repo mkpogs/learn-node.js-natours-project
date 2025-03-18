@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import mongoose from "mongoose";
 import slugify from "slugify";
 import validator from "validator";
@@ -42,6 +43,12 @@ const userSchema = new mongoose.Schema({
     },
     passwordChangedAt: {
         type: Date
+    },
+    passwordResetToken: {
+        type: String
+    },
+    passwordResetExpires: {
+        type: Date
     }
 });
 
@@ -78,6 +85,21 @@ userSchema.methods.changedPasswordAfter = async function (JWTTimestamp) {
 
     // FALSE means NOT changed
     return false;
+}
+
+userSchema.methods.createPasswordResetToken = function(){
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    console.log({ resetToken }, this.passwordResetToken);
+    
+    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+    return resetToken;
 }
 
 const User = mongoose.model('User', userSchema);
