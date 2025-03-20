@@ -6,6 +6,8 @@ import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from "xss-clean";
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js'
 import tourRouter from './routes/tourRoutes.js';
@@ -42,6 +44,11 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+// Data sanitization against XSS
+app.use(xss());
 
 app.use(express.static(`${__dirname}/src`)); // Serving a static file
 
