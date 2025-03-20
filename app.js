@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import express from 'express';
 import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js'
 import tourRouter from './routes/tourRoutes.js';
@@ -21,13 +22,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-// 1. Middleware
+// 1. Global Middleware
 if(process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'));
 }
+
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many request from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
+
 app.use(express.json());
-
-
 app.use(express.static(`${__dirname}/src`)); // Serving a static file
 
 app.use((req, res, next) => {
