@@ -7,6 +7,7 @@ import AppError from "./../utils/appError.js";
 import sendEmail from "./../utils/email.js";
 
 
+// ===== Functions =====
 const signToken = id => {
     return jwt.sign( 
         // payload
@@ -46,6 +47,8 @@ const createSendToken = (user, statusCode, res) => {
     });
 }
 
+
+// ===== Route Handler =====
 export const signup = catchAsync(async(req, res, next) => {
     const newUser = await User.create(req.body);
 
