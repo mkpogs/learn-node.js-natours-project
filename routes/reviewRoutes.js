@@ -6,12 +6,16 @@ import {
 } from './../controllers/reviewController.js';
 import { protect, restrictTo } from "./../controllers/authController.js";
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 
 router.route('/')
     .get(getAllReviews)
-    .post(protect, restrictTo('user'),createReview);
+    .post(
+        protect,
+        restrictTo('user'),
+        createReview
+    );
 
 router.route('/:id')
     .get(getReview)

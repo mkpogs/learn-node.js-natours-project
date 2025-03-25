@@ -10,16 +10,16 @@ import {
     getMonthlyPlan
 } from './../controllers/tourController.js';
 import { protect, restrictTo } from "./../controllers/authController.js";
-import {
-    createReview,
-    getAllReviews,
-    getReview
-} from './../controllers/reviewController.js';
+import reviewRouter from './reviewRoutes.js';
 
 const router = express.Router();
 
 // Param Middleware
 // router.param('id', checkID);
+
+// ===== Mounting Routes =====
+// --Nesting Routes
+router.use('/:tourId/reviews', reviewRouter);
 
 router.route('/tour-stats').get(getTourStats);
 router.route('/monthly-plan/:year').get(getMonthlyPlan);
@@ -37,13 +37,5 @@ router.route('/:id')
     .delete(protect, 
         restrictTo('admin', 'lead-guide'), 
         deleteTour);
-
-// ===== Simple Nested Routes =====
-router.route('/:tourId/reviews')
-    .post(
-        protect,
-        restrictTo('user'),
-        createReview
-    );
 
 export default router;
