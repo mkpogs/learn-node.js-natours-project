@@ -10,6 +10,11 @@ import {
     getMonthlyPlan
 } from './../controllers/tourController.js';
 import { protect, restrictTo } from "./../controllers/authController.js";
+import {
+    createReview,
+    getAllReviews,
+    getReview
+} from './../controllers/reviewController.js';
 
 const router = express.Router();
 
@@ -32,5 +37,13 @@ router.route('/:id')
     .delete(protect, 
         restrictTo('admin', 'lead-guide'), 
         deleteTour);
+
+// ===== Simple Nested Routes =====
+router.route('/:tourId/reviews')
+    .post(
+        protect,
+        restrictTo('user'),
+        createReview
+    );
 
 export default router;
