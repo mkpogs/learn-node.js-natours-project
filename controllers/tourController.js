@@ -7,6 +7,8 @@ import catchAsync from './../utils/catchAsync.js';
 import AppError from './../utils/appError.js';
 import {
     createOne,
+    getAll,
+    getOne,
     updateOne, 
     deleteOne 
 } from './handlerFactory.js';
@@ -26,56 +28,19 @@ export const aliasTopTours = async(req, res, next) => {
     next();
 }
 
-
 // Create a new tour
 export const createTour = createOne(Tour);
 
 // Fetch all tours
-export const getAllTours = catchAsync(async(req, res, next) => {
-
-    // 2. Execute Query
-    const features = new APIFeatures(Tour.find(), req.query)
-        .filter()
-        .sort()
-        .limitFields()
-        .paginate();
-    const tours = await features.query;
-
-    // 3. Send Response
-    res.status(200).json({
-        status: 'success',
-        results: tours.length,
-        data: {
-            tours
-        }
-    });
-    
-});
+export const getAllTours = getAll(Tour)
 
 // Fetch Specific tour by ID
-export const getTour = catchAsync(async(req, res, next) => {
-
-
-    const tour = await Tour.findById(req.params.id).populate('reviews');
-                        // Tour.findOne({_id:req.params.id});
-                        // Tour.findById(req.params.id);
-                    
-
-    if (!tour) {
-        return next(new AppError('No tour found with that ID', 404)); // Handle error with 'next'
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour
-        }
-    });
-});
+export const getTour = getOne(Tour, { path: 'reviews' });
 
 // PUT - Update all elements of a tour by ID
 // PATCH - Update 1 or more elements of a tour by ID
 export const updateTour = updateOne(Tour);
+
 // DELETE - Delete a tour by ID
 export const deleteTour = deleteOne(Tour);
 

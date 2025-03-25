@@ -2,6 +2,8 @@ import User from './../models/userModel.js';
 import catchAsync from './../utils/catchAsync.js';
 import AppError from './../utils/appError.js';
 import {
+    getAll,
+    getOne,
     updateOne, 
     deleteOne
  } from './handlerFactory.js';
@@ -19,19 +21,7 @@ const filterObj = (obj, ...allowedFields) => {
 }
 
 
-// --- User Route Handlers
-export const getAllUsers = catchAsync(async(req, res, next) => {
-    const users = await User.find();
-
-    res.status(200).json({
-        status: 'success',
-        results: users.length,
-        data: {
-            users
-        }
-    });
-});
-
+// ===== Route Handlers =====
 // Updating Current User data
 export const updateMe = catchAsync(async(req, res, next) => {
     // 1. Create error if user POSTs password data
@@ -69,22 +59,15 @@ export const deleteMe = catchAsync(async(req, res, next) => {
 });
 
 
-export const getUser = (req, res) => {
-    res.status(500).json({
-        status: 'error',
-        message: 'This route is not yet defined'
-    });
-}
-
 export const createUser = (req, res) => {
     res.status(500).json({
         status: 'error',
-        message: 'This route is not yet defined'
+        message: 'This route is not defined! please use /signup instead'
     });
 }
 
-// Update a User by Admin Role
+// Admin Role
+export const getAllUsers = getAll(User);
+export const getUser = getOne(User);
 export const updateUser = updateOne(User); // Do not Update password with this
-
-// Delete a User by Admin Role
 export const deleteUser = deleteOne(User);
