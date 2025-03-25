@@ -30,6 +30,23 @@ const reviewSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-const Review = mongoose.model('Review', reviewSchema);
 
+// ===== MIDDLEWARE =====
+
+// -- Populate Middleware
+reviewSchema.pre(/^find/, function(next){
+    this.populate({
+        path: 'tour',
+        select: 'name'
+    })
+    .populate({
+        path: 'user',
+        select: 'name photo'
+    });
+
+    next();
+});
+
+
+const Review = mongoose.model('Review', reviewSchema);
 export default Review;
