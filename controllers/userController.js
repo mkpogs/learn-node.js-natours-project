@@ -22,6 +22,12 @@ const filterObj = (obj, ...allowedFields) => {
 
 
 // ===== Route Handlers =====
+// Fetching the Current User Data
+export const getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+}
+
 // Updating Current User data
 export const updateMe = catchAsync(async(req, res, next) => {
     // 1. Create error if user POSTs password data
