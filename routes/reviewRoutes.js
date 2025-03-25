@@ -1,7 +1,9 @@
 import express from 'express';
 import {
+    setTourUserIds,
     createReview,
     getAllReviews,
+    updateReview,
     deleteReview,
     getReview,
 } from './../controllers/reviewController.js';
@@ -15,10 +17,12 @@ router.route('/')
     .post(
         protect,
         restrictTo('user'),
+        setTourUserIds,
         createReview
     );
 
 router.route('/:id')
+    .patch(updateReview)
     .delete(deleteReview)
 
 

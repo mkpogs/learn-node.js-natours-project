@@ -5,7 +5,11 @@ import Tour from './../models/tourModel.js';
 import APIFeatures from './../utils/apiFeatures.js';
 import catchAsync from './../utils/catchAsync.js';
 import AppError from './../utils/appError.js';
-import { deleteOne } from './handlerFactory.js';
+import {
+    createOne,
+    updateOne, 
+    deleteOne 
+} from './handlerFactory.js';
 
 
 // Create __dirname equivalent in ES module
@@ -24,17 +28,7 @@ export const aliasTopTours = async(req, res, next) => {
 
 
 // Create a new tour
-export const createTour = catchAsync(async(req, res, next) => {
-    
-    const newTour = await Tour.create(req.body);
-
-    res.status(201).json({
-        status: 'success',
-        data: {
-            tour: newTour
-        }
-    });
-});
+export const createTour = createOne(Tour);
 
 // Fetch all tours
 export const getAllTours = catchAsync(async(req, res, next) => {
@@ -81,41 +75,10 @@ export const getTour = catchAsync(async(req, res, next) => {
 
 // PUT - Update all elements of a tour by ID
 // PATCH - Update 1 or more elements of a tour by ID
-export const updateTour = catchAsync(async(req, res, next) => {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
-
-    if (!tour) {
-        return next(new AppError('No tour found with that ID', 404)); // Handle error with 'next'
-    }
-
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour
-        }
-    });
-});
-
+export const updateTour = updateOne(Tour);
 // DELETE - Delete a tour by ID
 export const deleteTour = deleteOne(Tour);
 
-// export const deleteTour = catchAsync(async (req, res, next) => {
-    
-//     const tour = await Tour.findByIdAndDelete(req.params.id);
-
-//     if (!tour) {
-//         return next(new AppError('No tour found with that ID', 404)); // Handle error with 'next'
-//     }
-
-//     res.status(204).json({
-//         status: 'success',
-//         data: null
-//     });
-    
-// });
 
 export const getTourStats = catchAsync(async(req, res, next) => {
     
