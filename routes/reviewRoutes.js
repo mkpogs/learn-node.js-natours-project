@@ -2,6 +2,7 @@ import express from 'express';
 import {
     createReview,
     getAllReviews,
+    deleteReview,
     getReview,
 } from './../controllers/reviewController.js';
 import { protect, restrictTo } from "./../controllers/authController.js";
@@ -18,9 +19,7 @@ router.route('/')
     );
 
 router.route('/:id')
-    .get(getReview)
-    // .patch()
-    // .delete()
+    .delete(deleteReview)
 
 
 export default router;

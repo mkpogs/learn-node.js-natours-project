@@ -1,7 +1,7 @@
 import Review from './../models/reviewModel.js';
-import APIFeatures from './../utils/apiFeatures.js';
 import catchAsync from './../utils/catchAsync.js';
 import AppError from './../utils/appError.js';
+import { deleteOne } from './handlerFactory.js';
 
 
 // ===== Route Handler =====
@@ -53,3 +53,6 @@ export const getReview = catchAsync(async(req, res, next) => {
         }
     });
 });
+
+// Delete Specific Review
+export const deleteReview = deleteOne(Review);
