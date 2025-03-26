@@ -25,15 +25,24 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:token', resetPassword);
-router.patch('/update-my-password', protect, updatePassword);
-router.get('/me',
-    protect,
+
+router.use(protect);
+
+// -- For User
+router.patch(
+    '/update-my-password', 
+    updatePassword
+);
+router.get(
+    '/me',
     getMe,
     getUser
 );
-router.patch('/update-me', protect, updateMe);
-router.delete('/delete-me', protect, deleteMe);
+router.patch('/update-me', updateMe);
+router.delete('/delete-me', deleteMe);
 
+// -- For Admin
+router.use(restrictTo('admin'));
 router.route('/')
     .get(getAllUsers)
     .post(createUser);
