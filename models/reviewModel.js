@@ -44,6 +44,9 @@ reviewSchema.pre(/^find/, function(next){
     next();
 });
 
+// ===== Indexes =====
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 
 // ===== Static Method =====
 reviewSchema.statics.calcAverageRatings = async function(tourId){
