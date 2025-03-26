@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Tour from "./../models/tourModel.js";
 
 
 const reviewSchema = new mongoose.Schema({
@@ -42,6 +43,57 @@ reviewSchema.pre(/^find/, function(next){
 
     next();
 });
+
+
+// ===== Static Method =====
+reviewSchema.statics.calcAverageRatings = async function(tourId){
+    const stats = await this.aggregate([
+        {
+            $match: {tour: tourId}
+        },
+        {
+            $group: {
+                _id: '$tour',
+                nRating: { $sum: 1 },
+                avgRating: { $avg: '$rating' }
+            }
+        }
+        
+    ]);
+    console.log(stats);
+
+    if(stats.length > 0){
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsQuantity: stats[0].nRating,
+            ratingsAverage: stats[0].avgRating
+        });
+    } else {
+        await Tour.findByIdAndUpdate(tourId, {
+            ratingsQuantity: 0,
+            ratingsAverage: 4.5
+        });
+    }
+}
+
+reviewSchema.post('save', function(){
+    // this points to current review
+    this.constructor.calcAverageRatings(this.tour);
+});
+
+// Store the document before updating/deleting
+reviewSchema.pre(/^findOneAnd/, async function(next) {
+    this.r = await this.clone().findOne(); // Clone the query before executing
+    // console.log(this.r);
+    next();
+});
+
+// After update/delete, run calcAverageRatings
+reviewSchema.post(/^findOneAnd/, async function() {
+    if (this.r) { // Ensure `this.r` exists
+        await this.r.constructor.calcAverageRatings(this.r.tour);
+    }
+});
+
 
 
 const Review = mongoose.model('Review', reviewSchema);
