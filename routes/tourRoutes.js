@@ -7,7 +7,8 @@ import {
     updateTour, 
     deleteTour,
     getTourStats,
-    getMonthlyPlan
+    getMonthlyPlan,
+    getToursWithin
 } from './../controllers/tourController.js';
 import { protect, restrictTo } from "./../controllers/authController.js";
 import reviewRouter from './reviewRoutes.js';
@@ -31,6 +32,11 @@ router.route('/monthly-plan/:year')
 
 router.route('/top-5-cheap')
     .get(aliasTopTours, getAllTours);
+
+router.route('/tours-within/:distance/center/:latlng/unit/:unit')
+    .get(getToursWithin);
+
+
 
 router.route('/')
     .get(getAllTours)
