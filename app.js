@@ -14,7 +14,7 @@ import { globalErrorHandler } from './controllers/errorController.js'
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
-import { title } from 'process';
+import viewRouter from './routes/viewRoutes.js';
 
 dotenv.config({
     path: './config.env'
@@ -82,29 +82,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
-// Rendering VIEWS Routes
-app.get('/', (req, res) => {
-    res.status(200).render('base', {
-        tour: 'The Forest Hiker',
-        user: 'MJ'
-    });
-});
-
-app.get('/overview', (req, res) => {
-    res.status(200).render('overview', {
-        title: 'All Tours'
-    });
-});
-
-app.get('/tour', (req, res) => {
-    res.status(200).render('tour', {
-        title: 'The Forest Hiker Tour'
-    });
-});
-
-
 // Mounting Routes
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
