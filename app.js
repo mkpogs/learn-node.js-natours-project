@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
@@ -26,8 +26,16 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Setting up PUG Engine in Express
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 
 // 1. Global Middleware
+// Serving a static file
+// app.use(express.static(`${__dirname}/src`)); 
+app.use(express.static(path.join(__dirname, 'src'))); // Serving a static file
+
 // Set Security HTTP headers
 app.use(helmet());
 
@@ -65,13 +73,20 @@ app.use(hpp({
     ]
 }));
 
-app.use(express.static(`${__dirname}/src`)); // Serving a static file
+
 
 // Test middleware
 app.use((req, res, next) => {
     req.requestTime = new Date().toISOString();
     next();
 });
+
+// Routes
+// Rendering VIEWS Routes
+app.get('/', (req, res) => {
+    res.status(200).render('base');
+});
+
 
 // Mounting Routes
 app.use('/api/v1/tours', tourRouter);
