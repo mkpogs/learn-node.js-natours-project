@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Rendering VIEWS Routes
 router.get('/', getOverview);
-router.get('/tour', getTour);
+router.get('/tour/:slug', getTour);
 
 
 
