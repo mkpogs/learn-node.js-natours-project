@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import cors from 'cors';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
@@ -9,6 +10,7 @@ import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from "xss-clean";
 import hpp from 'hpp';
+import cookieParser from 'cookie-parser';
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js'
 import tourRouter from './routes/tourRoutes.js';
@@ -35,12 +37,29 @@ app.set('views', path.join(__dirname, 'views'));
 // 1. Global Middleware
 // Serving a static file
 // app.use(express.static(`${__dirname}/src`)); 
-app.use(express.static(path.join(__dirname, 'src'))); // Serving a static file
+app.use(express.static(path.join(__dirname, 'src'))); // Serve everything in 'src/' directory
+
+app.use(cors({
+  origin: ['http://127.0.0.1:8000', 'http://localhost:8000'],
+  credentials: true // if you're using cookies or Authorization headers
+}));
+
+/*
+   - But… for full support (especially for non-simple requests like POST with cookies), you may also want to handle preflight OPTIONS requests:
+
+   - This ensures that all preflight (CORS "check") requests get the correct headers too, which can prevent weird issues.
+*/
+app.options('*', cors({
+  origin: ['http://127.0.0.1:8000', 'http://localhost:8000'],
+  credentials: true
+}));
+
+
 
 // Set Security HTTP headers
 // app.use(helmet());
 app.use(
-    // For mnot blocking the mapBox
+    // For not blocking the mapBox
     helmet.contentSecurityPolicy({
       directives: {
         defaultSrc: ["'self'"],
@@ -86,9 +105,13 @@ app.use(
         ],
         connectSrc: [
           "'self'",
+          'http://localhost:8000',   // your API
+          'http://127.0.0.1:8000',
+          'ws://127.0.0.1:*',        // Parcel's hot reload WebSocket
           'https://api.mapbox.com',
           'https://events.mapbox.com'
         ],
+
         frameSrc: ["'none'"],
         childSrc: ["'self'"],
         manifestSrc: ["'self'"],
@@ -114,6 +137,9 @@ app.use('/api', limiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+// Parse cookies
+app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());

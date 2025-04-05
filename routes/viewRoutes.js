@@ -4,9 +4,11 @@ import {
     getTour,
     getLoginForm
  } from './../controllers/viewsController.js';
+ import { isLoggedIn } from './../controllers/authController.js';
 
 const router = express.Router();
 
+router.use(isLoggedIn);
 
 // Rendering VIEWS Routes
 router.get('/', getOverview);

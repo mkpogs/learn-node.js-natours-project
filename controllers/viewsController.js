@@ -8,6 +8,7 @@ export const getOverview = catchAsync(async(req, res, next) => {
     // 2. BUild Template
 
     // 3. Render that template using data from 1
+    console.log('Logged in user:', res.locals.user); // Debug
     res.status(200).render('overview', {
         title: 'All Tours',
         tours

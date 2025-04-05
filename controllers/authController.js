@@ -29,6 +29,10 @@ const createSendToken = (user, statusCode, res) => {
         expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000),
         httpOnly: true
     };
+
+    // 👇 DEBUG: log cookie options
+    console.log('Cookie Options:', cookieOptions);
+
     if(process.env.NODE_ENV === 'production'){
         cookieOptions.secure = true
     }
@@ -80,6 +84,8 @@ export const protect = catchAsync(async(req, res, next) => {
 
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
         token = req.headers.authorization.split(' ')[1];
+    } else if(req.cookies.jwt){
+        token = req.cookies.jwt;
     }
     // console.log(token);
 
@@ -107,7 +113,6 @@ export const protect = catchAsync(async(req, res, next) => {
     req.user = currentUser;
     next();
 });
-
 
 export const restrictTo = (...roles) => {
     return (req, res, next) => {
@@ -200,4 +205,31 @@ export const updatePassword = catchAsync(async(req, res, next) => {
 
     // 4. Log user in, send JWT
     createSendToken(user, 200, res);
+});
+
+// Only for Rendered Pages, no errors!
+export const isLoggedIn = catchAsync(async(req, res, next) => {
+    if (req.cookies.jwt){
+        // Verify token
+        const decoded = await promisify(jwt.verify)(
+            req.cookies.jwt, 
+            process.env.JWT_SECRET
+        );
+    
+        // Check if user still exists
+        const currentUser = await User.findById(decoded.id);
+        if(!currentUser){
+            return next();
+        }
+    
+        // Check if user changed password after the token was issued
+        if (await currentUser.changedPasswordAfter(decoded.iat)) {
+            return next();
+        }
+    
+        // There is a logged in user
+        res.locals.user = currentUser;
+        return next(); 
+    }
+    next();
 });
