@@ -3,4 +3,14 @@ node_modules/
 
 # Ignore environment config file
 config.env
+
+# Ignore parcel-bundler cache
+.cache
+
+
+# Ignore bundled JavaScript files
+/src/js/bundle.js
+/src/js/bundle.js.map
+
+
 .qodo
