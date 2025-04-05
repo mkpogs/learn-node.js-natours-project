@@ -38,7 +38,66 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'src'))); // Serving a static file
 
 // Set Security HTTP headers
-app.use(helmet());
+// app.use(helmet());
+app.use(
+    // For mnot blocking the mapBox
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          'https://api.mapbox.com',
+          'https://events.mapbox.com'
+        ],
+        scriptSrcElem: [
+          "'self'",
+          'https://api.mapbox.com',
+          'https://events.mapbox.com'
+        ],
+        workerSrc: [
+          "'self'",
+          'blob:'
+        ],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://api.mapbox.com',
+          'https://fonts.googleapis.com'
+        ],
+        styleSrcElem: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://api.mapbox.com',
+          'https://fonts.googleapis.com'
+        ],
+        fontSrc: [
+          "'self'",
+          'https://fonts.googleapis.com',
+          'https://fonts.gstatic.com'
+        ],
+        imgSrc: [
+          "'self'",
+          'data:',
+          'blob:',
+          'https://api.mapbox.com',
+          'https://events.mapbox.com'
+        ],
+        connectSrc: [
+          "'self'",
+          'https://api.mapbox.com',
+          'https://events.mapbox.com'
+        ],
+        frameSrc: ["'none'"],
+        childSrc: ["'self'"],
+        manifestSrc: ["'self'"],
+        mediaSrc: ["'self'"]
+      }
+    })
+);
+  
+  
 
 // Development Logging
 if(process.env.NODE_ENV === 'development'){
