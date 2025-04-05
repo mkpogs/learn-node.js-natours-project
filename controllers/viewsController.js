@@ -30,3 +30,16 @@ export const getTour = catchAsync(async(req, res, next) => {
         tour
     });
 });
+
+export const getLoginForm = catchAsync(async(req, res, next) => {
+    // 1. Get the data from user 
+
+
+    // 2. Build Template
+
+    // 3. Render template using data from 1
+
+    res.status(200).render('login', {
+        title: `Log into your account`,
+    });
+});
