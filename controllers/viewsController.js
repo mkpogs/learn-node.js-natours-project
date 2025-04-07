@@ -48,3 +48,9 @@ export const getLoginForm = catchAsync(async(req, res, next) => {
         title: `Log into your account`,
     });
 });
+
+export const getAccount = (req, res) => {
+    res.status(200).render('account', {
+        title: `Your account`,
+    });
+}
