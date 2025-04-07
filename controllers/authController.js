@@ -78,6 +78,17 @@ export const login = catchAsync(async(req, res, next) => {
     createSendToken(user, 200, res);
 });
 
+export const logout = catchAsync(async(req, res, next) => {
+    res.cookie('jwt', 'logged out', {
+        expires: new Date(Date.now() + 10 * 1000),
+        httpOnly: true
+    });
+
+    res.status(200).json({
+        status: 'success'
+    });
+});
+
 export const protect = catchAsync(async(req, res, next) => {
     // 1. Getting token & check of it's there
     let token;
@@ -208,28 +219,32 @@ export const updatePassword = catchAsync(async(req, res, next) => {
 });
 
 // Only for Rendered Pages, no errors!
-export const isLoggedIn = catchAsync(async(req, res, next) => {
+export const isLoggedIn = async(req, res, next) => {
     if (req.cookies.jwt){
-        // Verify token
-        const decoded = await promisify(jwt.verify)(
-            req.cookies.jwt, 
-            process.env.JWT_SECRET
-        );
-    
-        // Check if user still exists
-        const currentUser = await User.findById(decoded.id);
-        if(!currentUser){
+        try{
+            // Verify token
+            const decoded = await promisify(jwt.verify)(
+                req.cookies.jwt, 
+                process.env.JWT_SECRET
+            );
+        
+            // Check if user still exists
+            const currentUser = await User.findById(decoded.id);
+            if(!currentUser){
+                return next();
+            }
+        
+            // Check if user changed password after the token was issued
+            if (await currentUser.changedPasswordAfter(decoded.iat)) {
+                return next();
+            }
+        
+            // There is a logged in user
+            res.locals.user = currentUser;
+            return next(); 
+        } catch (err){
             return next();
         }
-    
-        // Check if user changed password after the token was issued
-        if (await currentUser.changedPasswordAfter(decoded.iat)) {
-            return next();
-        }
-    
-        // There is a logged in user
-        res.locals.user = currentUser;
-        return next(); 
     }
     next();
-});
+}
