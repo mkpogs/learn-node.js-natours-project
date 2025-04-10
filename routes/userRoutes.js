@@ -7,7 +7,8 @@ import {
     createUser, 
     getUser,
     updateUser, 
-    deleteUser
+    deleteUser,
+    uploadUserPhoto
 } from './../controllers/userController.js';
 import { 
     signup, 
@@ -40,7 +41,11 @@ router.get(
     getMe,
     getUser
 );
-router.patch('/update-me', updateMe);
+router.patch(
+    '/update-me',
+    uploadUserPhoto,
+    updateMe
+);
 router.delete('/delete-me', deleteMe);
 
 // -- For Admin
