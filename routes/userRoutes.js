@@ -8,7 +8,8 @@ import {
     getUser,
     updateUser, 
     deleteUser,
-    uploadUserPhoto
+    uploadUserPhoto,
+    resizeUserPhoto
 } from './../controllers/userController.js';
 import { 
     signup, 
@@ -44,6 +45,7 @@ router.get(
 router.patch(
     '/update-me',
     uploadUserPhoto,
+    resizeUserPhoto,
     updateMe
 );
 router.delete('/delete-me', deleteMe);

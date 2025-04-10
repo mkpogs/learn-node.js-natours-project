@@ -1,4 +1,5 @@
 import multer from 'multer';
+import sharp from 'sharp';
 import User from './../models/userModel.js';
 import catchAsync from './../utils/catchAsync.js';
 import AppError from './../utils/appError.js';
@@ -12,17 +13,20 @@ import {
 
 // ===== Uploading Image using Multer Package
 // Destination of uploaded images
-const multerStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'src/img/users');
-    },
-    filename: (req, file, cb) => {
-        // user-userID-currTimeStamp - user-562dba-465....jpeg
-        // extract the file extension
-        const ext = file.mimetype.split('/')[1];
-        cb(null, `user-${req.user.id}-${Date.now()}.${ext}`)
-    }
-});
+// const multerStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'src/img/users');
+//     },
+//     filename: (req, file, cb) => {
+//         // user-userID-currTimeStamp - user-562dba-465....jpeg
+//         // extract the file extension
+//         const ext = file.mimetype.split('/')[1];
+//         cb(null, `user-${req.user.id}-${Date.now()}.${ext}`)
+//     }
+// });
+
+// Destination of uploaded images
+const multerStorage = multer.memoryStorage();
 
 // Validating Upload if it is an image
 const multerFilter = (req, file, cb) => {
@@ -40,7 +44,23 @@ const multerFilter = (req, file, cb) => {
     fileFilter: multerFilter
  });
 
- export const uploadUserPhoto = upload.single('photo'); 
+ export const uploadUserPhoto = upload.single('photo');
+ 
+ export const resizeUserPhoto = (req, res, next) => {
+    if(!req.file){
+        return next();
+    }
+
+    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`
+
+    sharp(req.file.buffer)
+        .resize(500, 500)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`src/img/users/${req.file.filename}`);
+
+    next();
+ } 
 
 // ===== Functions =====
 const filterObj = (obj, ...allowedFields) => {
