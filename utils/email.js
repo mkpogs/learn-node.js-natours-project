@@ -52,6 +52,9 @@ class Email {
             text: convert(html)
         }
 
+        // 
+        console.log("Sending email with:", this.newTransport(), mailOptions);
+
         // 3. Create a transport and send email
         await this.newTransport().sendMail(mailOptions);
     }
@@ -59,6 +62,11 @@ class Email {
     async sendWelcome(){
         await this.send('welcome', 'Welcome to the Natours Family!');
     }
+
+    async sendPasswordReset(){
+        await this.send('passwordReset', 'Your password reset token (valid for only 10 minutes)');
+    }
 }
+
 
 export default Email;
