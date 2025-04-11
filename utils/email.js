@@ -19,8 +19,15 @@ class Email {
 
     newTransport(){
         if(process.env.NODE_ENV === 'production'){
-            // SendGrid
-            return 1;
+            // Mailersend
+            return nodemailer.createTransport({
+                host: process.env.MAILERSEND_HOST,
+                port: process.env.MAILERSEND_PORT,
+                auth: {
+                    user: process.env.MAILERSEND_USERNAME,
+                    pass: process.env.MAILERSEND_PASSWORD
+                }
+            });
         }
 
         return nodemailer.createTransport({
