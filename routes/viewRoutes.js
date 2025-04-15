@@ -4,7 +4,8 @@ import {
     getTour,
     getLoginForm,
     getAccount,
-    updateUserData
+    updateUserData,
+    getMyTours
  } from './../controllers/viewsController.js';
  import { 
     isLoggedIn,
@@ -37,6 +38,11 @@ router.get(
   '/me', 
   protect, 
   getAccount
+);
+router.get(
+  '/my-tours', 
+  protect, 
+  getMyTours
 );
 
 router.post(
