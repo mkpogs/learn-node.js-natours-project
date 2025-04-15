@@ -35,6 +35,13 @@ app.set('views', path.join(__dirname, 'views'));
 // app.use(express.static(`${__dirname}/src`)); 
 app.use(express.static(path.join(__dirname, 'src'))); // Serve everything in 'src/' directory
 
+// This code will prevent the browser from throwing the "can't find" error by simply sending an empty response with status 204 when .map files are requested.
+app.get('*.js.map', (req, res) => {
+  console.log(`Source map requested: ${req.originalUrl}`);
+  res.status(204).send();
+});
+
+
 app.use(cors({
   origin: ['http://127.0.0.1:8000', 'http://localhost:8000'],
   credentials: true // if you're using cookies or Authorization headers
@@ -62,12 +69,14 @@ app.use(
         scriptSrc: [
           "'self'",
           'https://api.mapbox.com',
-          'https://events.mapbox.com'
+          'https://events.mapbox.com',
+          "https://js.stripe.com"
         ],
         scriptSrcElem: [
           "'self'",
-          'https://api.mapbox.com',
-          'https://events.mapbox.com'
+          "https://api.mapbox.com",
+          "https://events.mapbox.com",
+          "https://js.stripe.com"
         ],
         workerSrc: [
           "'self'",
@@ -103,12 +112,16 @@ app.use(
           "'self'",
           'http://localhost:8000',   // your API
           'http://127.0.0.1:8000',
-          'ws://127.0.0.1:*',        // Parcel's hot reload WebSocket
+          "ws://localhost:*",   // Parcel's hot reload WebSocket
+          'ws://127.0.0.1:*',
           'https://api.mapbox.com',
           'https://events.mapbox.com'
         ],
 
-        frameSrc: ["'none'"],
+        frameSrc: [
+          "'self'",
+          "https://js.stripe.com"
+        ],
         childSrc: ["'self'"],
         manifestSrc: ["'self'"],
         mediaSrc: ["'self'"]
