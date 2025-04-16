@@ -3,6 +3,13 @@ import Tour from "./../models/tourModel.js";
 import Booking from "./../models/bookingModel.js";
 import catchAsync from "./../utils/catchAsync.js";
 import AppError from "./../utils/appError.js";
+import {
+    getAll,
+    getOne,
+    updateOne, 
+    deleteOne,
+    createOne
+ } from './handlerFactory.js';
 
 
 // Validate if the Stripe Secret Key is defined in the environment variables
@@ -64,3 +71,9 @@ export const createBookingCheckout = catchAsync(async(req, res, next) => {
 
     res.redirect(req.originalUrl.split('?')[0]);
 });
+
+export const createBooking = createOne(Booking);
+export const getBooking = getOne(Booking);
+export const getAllBookings = getAll(Booking);
+export const updateBooking = updateOne(Booking);
+export const deleteBooking = deleteOne(Booking);
