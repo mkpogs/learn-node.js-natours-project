@@ -1,7 +1,6 @@
 import './config/config.js'; // Load environment variables first from config.js
 import fs from 'fs';
-import { fileURLToPath } from 'url';
-import path, { dirname } from 'path';
+import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import mongoSanitize from 'express-mongo-sanitize';
@@ -10,6 +9,7 @@ import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js';
+import getDirname from './config/dirname.js';
 import helmetCSP from './config/helmetConfig.js';
 import { corsMiddleware, corsPreflight } from './config/corsConfig.js';
 import apiRateLimiter from './config/rateLimitConfig.js'; 
@@ -22,8 +22,7 @@ import viewRouter from './routes/viewRoutes.js';
 const app = express();
 
 // Create __dirname equivalent in ES module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = getDirname(import.meta.url);
 
 // Setting up PUG Engine in Express
 app.set('view engine', 'pug');
