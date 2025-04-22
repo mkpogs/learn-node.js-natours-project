@@ -9,7 +9,7 @@
     "start:prod": "cross-env NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
     "watch:js": "parcel watch ./src/js/index.js --out-dir ./src/js --out-file bundle.js",
-    "build:js": "parcel watch ./src/js/index.js --out-dir ./src/js --out-file bundle.js"
+    "build:js": "parcel build ./src/js/index.js --out-dir ./src/js --out-file bundle.js"
   },
   "author": "Mj",
   "license": "ISC",

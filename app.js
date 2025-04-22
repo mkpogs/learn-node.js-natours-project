@@ -6,13 +6,13 @@ import path, { dirname } from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from "xss-clean";
 import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
 import AppError from './utils/appError.js';
-import { globalErrorHandler } from './controllers/errorController.js'
+import { globalErrorHandler } from './controllers/errorController.js';
+import helmetCSP from './config/helmetConfig.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
@@ -61,74 +61,7 @@ app.options('*', cors({
 
 // Set Security HTTP headers
 // app.use(helmet());
-app.use(
-    // For not blocking the mapBox
-    helmet.contentSecurityPolicy({
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: [
-          "'self'",
-          'https://api.mapbox.com',
-          'https://events.mapbox.com',
-          "https://js.stripe.com"
-        ],
-        scriptSrcElem: [
-          "'self'",
-          "https://api.mapbox.com",
-          "https://events.mapbox.com",
-          "https://js.stripe.com"
-        ],
-        workerSrc: [
-          "'self'",
-          'blob:'
-        ],
-        objectSrc: ["'none'"],
-        baseUri: ["'self'"],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          'https://api.mapbox.com',
-          'https://fonts.googleapis.com'
-        ],
-        styleSrcElem: [
-          "'self'",
-          "'unsafe-inline'",
-          'https://api.mapbox.com',
-          'https://fonts.googleapis.com'
-        ],
-        fontSrc: [
-          "'self'",
-          'https://fonts.googleapis.com',
-          'https://fonts.gstatic.com'
-        ],
-        imgSrc: [
-          "'self'",
-          'data:',
-          'blob:',
-          'https://api.mapbox.com',
-          'https://events.mapbox.com'
-        ],
-        connectSrc: [
-          "'self'",
-          'http://localhost:8000',   // your API
-          'http://127.0.0.1:8000',
-          "ws://localhost:*",   // Parcel's hot reload WebSocket
-          'ws://127.0.0.1:*',
-          'https://api.mapbox.com',
-          'https://events.mapbox.com'
-        ],
-
-        frameSrc: [
-          "'self'",
-          "https://js.stripe.com"
-        ],
-        childSrc: ["'self'"],
-        manifestSrc: ["'self'"],
-        mediaSrc: ["'self'"]
-      }
-    })
-);
-  
+app.use(helmetCSP);
   
 
 // Development Logging
