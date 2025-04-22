@@ -5,7 +5,6 @@ import express from 'express';
 import morgan from 'morgan';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from "xss-clean";
-import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js';
