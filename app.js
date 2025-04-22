@@ -1,5 +1,4 @@
 import './config/config.js'; // Load environment variables first from config.js
-import cors from 'cors';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
@@ -13,6 +12,7 @@ import cookieParser from 'cookie-parser';
 import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js';
 import helmetCSP from './config/helmetConfig.js';
+import { corsMiddleware, corsPreflight } from './config/corsConfig.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
@@ -41,22 +41,14 @@ app.get('*.js.map', (req, res) => {
   res.status(204).send();
 });
 
-
-app.use(cors({
-  origin: ['http://127.0.0.1:8000', 'http://localhost:8000'],
-  credentials: true // if you're using cookies or Authorization headers
-}));
-
+// Use CORS
+app.use(corsMiddleware);
 /*
    - But… for full support (especially for non-simple requests like POST with cookies), you may also want to handle preflight OPTIONS requests:
 
    - This ensures that all preflight (CORS "check") requests get the correct headers too, which can prevent weird issues.
 */
-app.options('*', cors({
-  origin: ['http://127.0.0.1:8000', 'http://localhost:8000'],
-  credentials: true
-}));
-
+app.options('*', corsPreflight); // Enable preflight for all routes
 
 
 // Set Security HTTP headers
