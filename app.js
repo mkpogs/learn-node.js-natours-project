@@ -4,7 +4,6 @@ import { fileURLToPath } from 'url';
 import path, { dirname } from 'path';
 import express from 'express';
 import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import xss from "xss-clean";
 import hpp from 'hpp';
@@ -13,6 +12,7 @@ import AppError from './utils/appError.js';
 import { globalErrorHandler } from './controllers/errorController.js';
 import helmetCSP from './config/helmetConfig.js';
 import { corsMiddleware, corsPreflight } from './config/corsConfig.js';
+import apiRateLimiter from './config/rateLimitConfig.js'; 
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
@@ -62,12 +62,7 @@ if(process.env.NODE_ENV === 'development'){
 }
 
 // Limit request from same API
-const limiter = rateLimit({
-    max: 100,
-    windowMs: 60 * 60 * 1000,
-    message: 'Too many request from this IP, please try again in an hour!'
-});
-app.use('/api', limiter);
+app.use('/api', apiRateLimiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
