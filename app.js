@@ -12,7 +12,8 @@ import { globalErrorHandler } from './controllers/errorController.js';
 import getDirname from './config/dirname.js';
 import helmetCSP from './config/helmetConfig.js';
 import { corsMiddleware, corsPreflight } from './config/corsConfig.js';
-import apiRateLimiter from './config/rateLimitConfig.js'; 
+import apiRateLimiter from './config/rateLimitConfig.js';
+import hppMiddleware from './config/hppConfig.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
@@ -76,17 +77,7 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent parameter pollution
-app.use(hpp({
-    whitelist: [
-        'duration',
-        'maxGroupSize',
-        'difficulty',
-        'ratingsAverage',
-        'ratingsQuantity',
-        'price',
-        'sort'
-    ]
-}));
+app.use(hppMiddleware);
 
 
 
